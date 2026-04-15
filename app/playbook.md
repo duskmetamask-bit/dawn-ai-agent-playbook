@@ -1,430 +1,634 @@
-# Setup Guide
+# AI Agent Playbook — The Complete Automation System
 
-## How to Use This Playbook
-
-This playbook is for you if you want to run an AI agent that works for you while you sleep. No coding experience required. If you can use a text editor and follow steps, you can set this up.
-
-Before you start, you need:
-- A computer (Mac or Linux) or a server you can access via terminal
-- A Telegram account
-- Basic comfort with copy-pasting commands
-
-Every AI agent system has three parts you must understand:
-
-**Brain** — The agent itself (like Claude or Hermes). It thinks and responds. Without it, nothing happens.
-
-**Memory** — Where the agent stores what it knows about you and your projects. Without this, it forgets everything between sessions.
-
-**Triggers** — Schedules or events that make the agent act. Without triggers, you have to manually start everything.
-
-When you see prompts in this playbook marked "Copy into Claude/Hermes," paste them exactly as shown into your agent interface. The agent will read them and follow the instructions you give.
+**Version 3.0 | April 2026 | Built with Hermes × OpenClaw**
 
 ---
 
-## Setting Up Your Vault
+## Is This For You?
 
-Your vault is a folder structure where your agent stores everything it needs to remember. Think of it as the agent's long-term memory. Without a vault, your agent starts fresh every session with no context.
+This playbook is for you if:
+
+- You run a business or manage clients and your calendar is never your own
+- You're technical enough to copy-paste commands but don't want to become a full-time automator
+- You have real work to do and you're tired of the same repetitive tasks eating your day
+- You want an AI that works for you while you sleep, not one you have to babysit
+
+This playbook is **not** for you if:
+
+- You want a magic button that runs your business without you
+- You're not willing to spend 1-2 hours setting things up properly the first time
+- You want to outsource your thinking entirely
+
+---
+
+## How to Use This Playbook
+
+Everything here is designed to be followed in order. The concepts build on each other:
+
+1. **Setup Guide** — Build the foundation. Vault, Telegram, core concepts.
+2. **Cron Jobs & Automation** — The automation primitives. These are the working prompts.
+3. **Step-by-Step Walkthroughs** — Three real systems you can build today.
+4. **File Templates** — Copy, fill in, deploy.
+5. **Quick Reference** — Commands, syntax, troubleshooting.
+
+The prompts in Section 2 are the core of this playbook. They are not placeholder examples — they are the actual prompts that work. Each one includes annotations explaining why it produces good output. Copy them exactly, adjust the fields in brackets, deploy.
+
+---
+
+# SECTION 01: SETUP GUIDE
+
+## The Three Parts of Any AI Agent System
+
+Every AI agent system — from the simplest to the most complex — has three parts you must understand:
+
+**Brain** — The agent itself (Hermes, Claude, OpenClaw). It thinks, responds, and acts. Without it, nothing happens.
+
+**Memory** — Where the agent stores what it knows about you and your projects. Without this, it starts fresh every session and has no context.
+
+**Triggers** — Schedules or events that make the agent act. Without triggers, you have to manually start everything.
+
+Think of it like a salaried employee. The brain is their intelligence. Memory is their desk with your files. Triggers are their calendar invites. All three are required to function.
+
+---
+
+## Your Vault: The Agent's Long-Term Memory
+
+The vault is a folder structure where your agent stores everything it needs to remember. Not just preferences — actual project state, session logs, contacts, templates.
+
+**Why it matters:** Without a vault, your agent forgets everything between sessions. You end up repeating yourself every single time. With a vault, it knows who you are, what you're building, and what you care about — indefinitely.
+
+### Folder Structure
 
 Create this exact structure on your computer:
 
-~/.hermes/
+```
+~/.vault/
   memories/
     PROFILE.md
     PROJECTS.md
-~/.openclaw/
-  vault/
-    daily/
-    projects/
-    templates/
-
-Here's what each piece does:
-
-**~/.hermes/memories/PROFILE.md** — Tells the agent who you are, what you care about, and what you want it to help with. Update this when your goals change.
-
-**~/.hermes/memories/PROJECTS.md** — A running list of active projects with status, next steps, and key details. The agent reads this to know what you're working on.
-
-**~/.openclaw/vault/daily/** — Stores session logs from each day. The agent can review past sessions to track progress and avoid repeating itself.
-
-**~/.openclaw/vault/projects/** — Each project gets its own folder here. This is where project-specific files, notes, and artifacts live.
-
-**~/.openclaw/vault/templates/** — Reusable templates for common tasks. Copy these when starting new work to stay consistent.
-
-Here is what your PROFILE.md should look like:
-
+  daily/
+  projects/
+  templates/
 ```
+
+One command:
+
+```bash
+mkdir -p ~/.vault/{memories,daily,projects,templates}
+```
+
+That's it. No complex setup. No database. Plain folders.
+
+---
+
+### Your PROFILE.md
+
+This is the most important file. It tells the agent who you are.
+
+Drop this at `~/.vault/memories/PROFILE.md`:
+
+```markdown
 # Profile
 
-Name: [YOUR NAME]
-Role: [WHAT YOU DO]
-Location: [WHERE YOU ARE]
+Name:
+Location / Timezone:
+Role:
 
-Goals for this agent:
-- [GOAL 1]
-- [GOAL 2]
-- [GOAL 3]
+## What You're Building
+<!-- One paragraph. Specific. Not "a business" — what exactly. -->
 
-Communication style: [HOW YOU WANT THE AGENT TO TALK TO YOU]
-Preferred response length: [SHORT / MEDIUM / DETAILED]
+## Goals This Month
+1.
+2.
+3.
 
-What I need help with most:
-- [PRIORITY 1]
-- [PRIORITY 2]
-- [PRIORITY 3]
+## Current Projects
+<!-- One line per project: name — status / next action -->
+-
+-
+-
+
+## How You Like to Work
+<!-- Session length, async vs sync, decision style, pace -->
+
+## Your Voice
+Use:
+<!-- e.g. direct, punchy, no fluff, first person, short sentences -->
+Avoid:
+<!-- e.g. corporate speak, excessive hedging, bullet-point overload -->
+
+## Key Preferences
+- Format:
+- Response length:
+- Feedback style:
 ```
 
-And your PROJECTS.md:
+**Fill this in once. Update it when things change.** The agent reads this at the start of every session. The more specific you are, the better it performs.
 
-```
+---
+
+### Your PROJECTS.md
+
+Drop this at `~/.vault/memories/PROJECTS.md`:
+
+```markdown
 # Active Projects
 
-## Project Name: [PROJECT 1]
-Status: [ACTIVE / PAUSED / COMPLETED]
-Last updated: [DATE]
-Current task: [WHAT NEEDS TO HAPPEN NEXT]
+## [Project Name]
+Status: ACTIVE / PAUSED / COMPLETED
+Last updated: YYYY-MM-DD
+Current task:
 Key details:
-- [DETAIL 1]
-- [DETAIL 2]
-
-## Project Name: [PROJECT 2]
-Status: [ACTIVE / PAUSED / COMPLETED]
-Last updated: [DATE]
-Current task: [WHAT NEEDS TO HAPPEN NEXT]
-Key details:
-- [DETAIL 1]
-- [DETAIL 2]
+-
+-
 ```
 
-Fill these in with real information. The more specific you are, the better your agent can help you.
+This is your running project state. The agent reads this to know what you're working on without you explaining it every session.
+
+---
+
+### Daily Logs
+
+`~/.vault/daily/` stores session logs by date: `YYYY-MM-DD.md`.
+
+When a session ends, the agent writes a log. When a new session starts, it reads the previous log. This prevents repetition and enables continuity across sessions.
+
+---
+
+### Projects Folder
+
+`~/.vault/projects/` holds project-specific files. Each project gets its own subfolder with its own briefs, notes, and artifacts.
+
+---
+
+### Templates Folder
+
+`~/.vault/templates/` holds reusable templates: meeting notes, weekly reviews, project briefs, ICP documents. Copy these when starting new work to stay consistent.
 
 ---
 
 ## Connecting to Telegram
 
-Telegram is how you talk to your agent. Once set up, you message a bot and the agent responds.
+Telegram is how you talk to your agent. Once connected, you message a bot and the agent responds — from anywhere, at any time.
 
-**Step 1:** Open Telegram and search for @BotFather. Start a chat and send the message `/newbot`. Follow the prompts. Give your bot a name and a username. BotFather will give you a token that looks like `123456789:ABCdefGhIJKlmNoPQRstuVWxyZ`.
+### Step 1: Create a Bot
 
-**Step 2:** Save that token in a file called `.env` in your project folder:
+1. Open Telegram and search for **@BotFather**
+2. Send `/newbot`
+3. Follow the prompts — give it a name and a username
+4. BotFather gives you a token: `123456789:ABCdefGhIJKlmNoPQRstuVWxyZ`
 
+**Save that token.** You need it in the next step.
+
+### Step 2: Configure Hermes
+
+In your `~/.hermes/config.yaml`, add:
+
+```yaml
+telegram:
+  bot_token: "123456789:ABCdefGhIJKlmNoPQRstuVWxyZ"
+  enabled: true
 ```
-TELEGRAM_BOT_TOKEN=123456789:ABCdefGhIJKlmNoPQRstuVWxyZ
+
+Or set it as an environment variable in `~/.hermes/.env`:
+
+```bash
+TELEGRAM_BOT_TOKEN=123456...WxyZ
 ```
 
-**Step 3:** Start your agent and send it the message `/start`. If everything is connected, you should get a greeting back.
+### Step 3: Start the Gateway
 
-If you do not receive a response, double-check that your token is correct and that your agent is actually running.
+```bash
+openclaw gateway start
+```
+
+### Step 4: Start Hermes
+
+```bash
+hermes
+```
+
+Then send `/start` to your bot. You should get a greeting back.
+
+If nothing happens: double-check the token, make sure Hermes is running, and run `openclaw gateway status` to confirm the gateway is up.
 
 ---
 
-Next: Configure your first agent prompt and start your first session.
+## Model Selection and Cost
+
+Running an AI agent isn't free. Here's what you need to know.
+
+### Model Tiers
+
+| Tier | Examples | Speed | Cost | Best For |
+|------|---------|-------|------|----------|
+| Fast/cheap | Claude Haiku, GPT-4o mini | Fast | ~$0.50/M tokens | Simple tasks, cron outputs, summaries |
+| Balanced | GPT-4o, Claude Sonnet | Medium | ~$3-5/M tokens | Most agent tasks, research, drafting |
+| Premium | Claude Opus, o1 | Slower | ~$15-30/M tokens | Complex analysis, high-stakes output |
+
+### Cost Reality Check
+
+A morning briefing cron that fires 5 days a week for a month:
+
+- ~20 calls/month
+- At balanced tier: roughly $0.10-0.30/month
+- At premium tier: roughly $0.60-2.00/month
+
+A 4-hourly opportunity scan:
+
+- ~180 calls/month
+- At fast tier: roughly $0.50-1.50/month
+- At balanced tier: roughly $3-10/month
+
+**Start with a fast/cheap model for routine crons.** Reserve premium models for tasks that need the quality.
+
+Set this in your agent config:
+
+```yaml
+model: anthropic/claude-haiku-3.5   # for routine crons
+# model: anthropic/claude-sonnet-4  # for quality tasks
+```
+
 ---
 
 # SECTION 02: CRON JOBS & AUTOMATION
 
-## What Cron Jobs Do
+## What Cron Jobs Actually Do
 
-Cron jobs are scheduled tasks that run on autopilot. No human reminders, no manual check-ins, no "did I do that?" anxiety. You set them once and they fire when they're supposed to—every day, every week, every four hours. Whatever you need.
+Cron jobs are scheduled tasks that run on autopilot. No human reminders, no "did I do that?" anxiety. You set them once and they fire when they're supposed to.
 
-Cron jobs replace the repetitive stuff that eats your day: morning briefings you write at 6 AM, evening reviews you skip because you're tired, weekly recaps that never happen, content drafts you keep pushing off, opportunity scans you forget to run. Automation handles the rhythm so your brain handles the judgment.
+The difference between someone who uses agents and someone who talks about using agents iscron jobs. Without them, you have a chatbot. With them, you have an employee that never sleeps.
 
----
+**What crons replace:**
+- Morning briefings you write at 6 AM while half-asleep
+- Evening reviews you skip because you're tired
+- Weekly recaps that never happen
+- Content drafts you keep pushing off
+- Opportunity scans you forget to run
 
-## Cron Syntax Explained
-
-Every cron line has five fields: minute hour day month weekday
-
-Every day 7 AM         ->  0 7 * * *
-Weekdays 7:30 AM       ->  0 7 * * 1-5
-Every Monday 9 AM       ->  0 9 * * 1
-Every Sunday 8 PM       ->  0 20 * * 0
-Every 4 hours           ->  0 */4 * * *
-
-Five fields, five stars in order. Minute (0-59), Hour (0-23), Day of month (1-31), Month (1-12), Day of week (0-6, Sunday = 0 or 7). Use * for "every," ranges like 1-5 for weekdays, */4 for every 4 units. That's it.
+**What crons don't replace:**
+- Decisions only you can make
+- Conversations that require judgment
+- Tasks that change based on new information you haven't shared
 
 ---
 
-## 5 Working Cron Job Examples
+## Cron Syntax: The Five-Field Format
+
+Every cron expression has five fields:
+
+```
+minute hour day-of-month month day-of-week
+```
+
+| Field | Values | Special |
+|-------|--------|---------|
+| Minute | 0-59 | `*` = every, `*/n` = every n units |
+| Hour | 0-23 | `*` = every, `*/n` = every n units |
+| Day of month | 1-31 | `*` = every |
+| Month | 1-12 | `*` = every |
+| Day of week | 0-6 (Sun=0 or 7) | `1-5` = weekdays, `0` = Sunday |
+
+**Common schedules:**
+
+```
+Every day 7 AM              ->  0 7 * * *
+Weekdays 7:30 AM            ->  30 7 * * 1-5
+Every Monday 9 AM           ->  0 9 * * 1
+Every Sunday 8 PM           ->  0 20 * * 0
+Every 4 hours               ->  0 */4 * * *
+Every 2 hours               ->  0 */2 * * *
+1st of month 9 AM           ->  0 9 1 * *
+Wednesday + Friday 9 AM     ->  0 9 * * 3,5
+Every weekday noon          ->  0 12 * * 1-5
+```
 
 ---
 
-### CRON 1: Morning Briefing
+## The Five Working Prompts
 
-**Schedule:** Weekdays 7:30 AM | `0 7 * * 1-5`
+These are the core automations. Each one includes the full prompt and an explanation of **why it works**.
+
+---
+
+### PROMPT 1: Morning Briefing
+
+**Schedule:** Weekdays 7:30 AM | `30 7 * * 1-5`
 **Delivery:** Telegram
+**Model:** Fast/cheap (routine, high frequency)
 
-**Prompt:**
+```markdown
+Morning Briefing — [DATE]
 
+You are a senior executive assistant. Your job is to give a crisp, actionable morning briefing for [NAME], a [ROLE].
+
+Today is [DATE].
+
+3 MUST-DOS — The 3 non-negotiable tasks for today. Each must be specific and actionable. Format as "1. [Task] — why it matters today". No vague priorities. If a task has been sitting for 3+ days, flag it.
+
+WHAT'S ON YOUR PLATE — Current projects, ongoing threads, commitments. What's active right now. One line per item, max 5 items.
+
+RED FLAGS — Anything about to blow up: deadlines within 24h, conversations that need follow-up, deliverables at risk. If nothing urgent, write "All clear — no red flags."
+
+ONE THING DIFFERENTLY — One specific thing [NAME] could do today to move faster or think clearer. Not a habit tip — something tactical. One sentence max.
+
+Output: Plain text. Tight. Under 150 words total. No headers. No bullet points in the body. No emojis.
 ```
-Morning Briefing — 3 must-dos, what's on your plate, red flags, one thing to change.
 
-Today is [DATE]. Your name is [YOUR NAME] and your role is [YOUR ROLE].
+**Why this works:**
 
-3 MUST-DOS: List the 3 non-negotiable tasks for today. Be specific. No fluff.
+- **Role anchoring** ("senior executive assistant") sets the output standard immediately — the agent doesn't generate small talk, it generates briefing notes
+- **Specificity constraints** ("3+ days flag", "why it matters today") prevent vague GENERIC responses
+- **Conditional section** ("If nothing urgent, write 'All clear'") prevents padding on quiet days
+- **Output format locked** ("Plain text. Tight. Under 150 words. No headers. No emojis.") means you get something you can actually read in 30 seconds on your phone
+- **"One thing differently" is tactical not aspirational** — it forces a actionable micro-change, not a mindset tip
 
-WHAT'S ON YOUR PLATE: Brief summary of current projects, threads, commitments. What's active right now.
-
-RED FLAGS: Anything about to blow up, deadlines approaching, conversations you need to follow up on. If nothing urgent, say "All clear."
-
-ONE THING DIFFERENTLY: One specific thing you could do today to move faster or think clearer. Keep it actionable.
-
-Respond in plain text. No headers. Tight and direct.
-```
+**Anti-patterns in this prompt (why "Do NOT use" works):**
+Don't say "be specific" — say "Each must be specific and actionable. Format as '1. [Task] — why it matters today'"
 
 ---
 
-### CRON 2: Evening Review
+### PROMPT 2: Evening Review
 
 **Schedule:** Daily 6 PM | `0 18 * * *`
 **Delivery:** Telegram
+**Model:** Fast/cheap
 
-**Prompt:**
+```markdown
+Evening Review — [DATE]
 
+Date: [DATE]. Your name: [NAME].
+
+WHAT GOT DONE — What did you actually finish today? List 3-5 specific accomplishments. Real ones. Format as "1. [What] — [result]". Be specific — not "worked on marketing" but "published Tuesday's thread, 3 replies, 1 new follower from @handle."
+
+WHAT DIDN'T GET DONE — What slipped off the list? Be honest. Assign a reason: blocked / distracted / scope creep / didn't matter. Format: "[Task] — [reason]."
+
+TOMORROW'S FOCUS — One thing to start tomorrow. One thing to stop doing tomorrow. One thing to continue. Format: "Start: [action]. Stop: [action]. Continue: [action]."
+
+Output: Plain text. Brutal honesty. No padding. No motivational closing. Under 120 words.
 ```
-Evening Review — what got done, what didn't, what to carry into tomorrow.
 
-Date: [DATE]. Your name: [YOUR NAME].
+**Why this works:**
 
-WHAT GOT DONE: What did you actually finish today? List 3-5 specific accomplishments. Real ones.
-
-WHAT DIDN'T GET DONE: What slipped off the list? Be honest. Assign a reason if you can — blocked, distracted, scope creep.
-
-TOMORROW: What one thing do you start tomorrow? What do you stop doing tomorrow? What do you continue?
-
-Respond in plain text. Brutal honesty. No padding.
-```
+- **Stop/Start/Continue framework** forces a decision about behavior change, not just a task list
+- **Result specificity** ("published Tuesday's thread, 3 replies, 1 new follower") makes the log machine-readable and actually useful for weekly review
+- **Failure reason tagging** (blocked/distracted/scope creep) builds self-awareness over time about where energy actually goes
+- **Under 120 words** — evening reviews that are longer than a slide get skimmed, not read
 
 ---
 
-### CRON 3: Weekly Review
+### PROMPT 3: Weekly Review
 
 **Schedule:** Every Sunday 8 PM | `0 20 * * 0`
 **Delivery:** Telegram
+**Model:** Balanced (complex synthesis)
 
-**Prompt:**
+```markdown
+Weekly Review — Week of [DATE] through [DATE]
 
+You are a performance analyst. Your job is to review [NAME]'s week and produce a structure that enables a clear start to next week.
+
+WINS — The 3 biggest wins this week. What moved forward? What shipped? What closed? One line each. Specific results, not activity descriptions.
+
+METRICS — Key numbers. Revenue, leads, engagement, commits — whatever [NAME] tracks. Actual vs target with delta. If nothing tracked this week, say "No metrics tracked this week — add tracking next week."
+
+TOP 3 PRIORITIES — The 3 things that matter most next week. Not a wishlist — what [NAME] must get done. One sentence each.
+
+ONE DECISION — The one thing [NAME] is avoiding or needs to decide. Name it. Give just enough context that someone reading this understands the stakes. If nothing being avoided, say "Nothing being avoided — good."
+
+Output: Markdown with headers. Under 250 words. Ship it.
 ```
-Weekly Review — [DATE] through [DATE].
 
-WINS: Your 3 biggest wins this week. What moved forward? What shipped? What closed?
+**Why this works:**
 
-METRICS: Key numbers that matter. Revenue, leads, engagement, commits, whatever you track. Give context.
-
-TOP 3 PRIORITIES: The 3 things that matter most next week. Not a wishlist—the actual load.
-
-ONE DECISION NEEDED: One thing you're stuck on or need to decide. Give just enough context for someone to actually help.
-
-Keep it under 250 words. No decoration. Ship it.
-```
+- **Machine-readable metrics section** — when you do this every week, you build a log that shows trajectory over time
+- **"One decision" section** — the highest-value part of any weekly review is naming the thing you're avoiding. The prompt forces it out.
+- **"Not a wishlist" constraint** — prevents the common failure of listing everything you'd ideally do instead of what you'll actually do
+- **Balanced model** — weekly review requires synthesis, not just retrieval, so use a better model
 
 ---
 
-### CRON 4: Content Draft
+### PROMPT 4: Content Draft
 
-**Schedule:** Daily 9 AM | `0 9 * * *`
-**Delivery:** Discord #content channel
+**Schedule:** Daily 9 AM | `0 9 * * 1-5`
+**Delivery:** Discord #content or Telegram
+**Model:** Balanced
 
-**Prompt:**
+```markdown
+Content Draft — [PLATFORM: X/Twitter or LinkedIn]
+Topic: [TOPIC]
 
-```
-Content Draft — [PLATFORM: X/Twitter or LinkedIn].
+Task: Write 3 distinct drafts for [PLATFORM]. Each ready to post with zero editing.
 
-Topic: [TOPIC FROM YOUR CONTENT CALENDAR OR CURRENT THREAD].
+DRAFT 1 — Tone: [e.g., provocative, makes someone think]
+Format requirements:
+- X: Under 280 characters. Strong hook first line. No hashtags unless natural. No "1/" or "Here's a thread" opener.
+- LinkedIn: Under 200 words. First line must be a scroll-stopper — a number, a dollar figure, or a specific claim. Not a question. Not a platitude.
 
-Task: Write 3 drafts for [PLATFORM]. Each should be ready to post with zero editing.
+DRAFT 2 — Tone: [e.g., educational, shows you know your stuff]
+Same format requirements as Draft 1.
 
-Draft 1: [tone/style if specified, e.g., "provocative, no fluff"]
-Draft 2: [tone/style if specified, e.g., "educational, links to your post"]
-Draft 3: [tone/style if specified, e.g., "short punchy story format"]
+DRAFT 3 — Tone: [e.g., short story format, personal angle]
+Same format requirements as Draft 1.
 
-For X: Keep under 280 characters. For LinkedIn: Keep under 200 words. Include hook. No hashtags unless specified.
+Do NOT use in any draft:
+- "I hope this finds you"
+- "I wanted to reach out"
+- "Just checking in"
+- "Would love to connect"
+- "Thought this might resonate"
+- Any variation of "engagement farming" language
 
-Format:
-DRAFT 1:
+Output format:
+DRAFT 1 ([platform], [tone]):
 [content]
 ---
-DRAFT 2:
+DRAFT 2 ([platform], [tone]):
 [content]
 ---
-DRAFT 3:
+DRAFT 3 ([platform], [tone]):
 [content]
 ```
 
+**Why this works:**
+
+- **Three distinct tones** give you choice without requiring the AI to commit to one angle
+- **"Ready to post with zero editing"** sets a quality bar — generic prompts produce generic drafts
+- **Platform-specific constraints** built in (character counts, scroll-stopper definition)
+- **"Do NOT use" list** — specific phrases that appear in every bad piece of AI content, explicitly banned
+- **No "engagement farming" language** — this is the exact language that signals to readers "this was written by AI or by someone trying too hard"
+
 ---
 
-### CRON 5: Lead / Opportunity Scan
+### PROMPT 5: Lead & Opportunity Scan
 
 **Schedule:** Every 4 hours | `0 */4 * * *`
-**Delivery:** Discord #research channel
+**Delivery:** Discord #research or Telegram
+**Model:** Fast/cheap
 
-**Prompt:**
+```markdown
+Lead & Opportunity Scan — [DATE, HH:MM UTC]
 
-```
-Lead & Opportunity Scan — [DATE, HH:MM UTC].
+You are a senior sales analyst. Your job is to scan for relevant signals and opportunities in [INDUSTRY/NICHE] and surface only what is actionable within 24 hours.
 
-Task: Scan for relevant news, signals, and opportunities in [YOUR INDUSTRY/NICHE]. Check: industry news, competitor moves, viral posts relevant to [YOUR FOCUS], hiring signals from target accounts.
+Check: industry news, competitor moves, viral posts relevant to [FOCUS], hiring signals from target accounts, funding announcements.
 
-REPORT ONLY IF: You find something actionable. If nothing actionable, respond with:
+REPORT ONLY IF — You find something actionable. If nothing actionable this cycle, respond with exactly:
 
 "No actionable leads this cycle."
 
-ACTIONABLE MEANS: A relevant opportunity you could act on within 24 hours. A connection request worth making. A conversation worth starting. A trend worth commenting on. A target account showing signals.
+Do not pad. Do not summarize news for the sake of it. Do not speculate.
+
+ACTIONABLE means:
+- A relevant opportunity you could act on within 24 hours
+- A connection request worth making
+- A conversation worth starting
+- A trend worth commenting on
+- A target account showing buying signals
 
 If you find something:
-LEAD/OPPORTUNITY: [What you found]
+LEAD: [What you found — be specific]
 WHY IT MATTERS: [Who this is relevant to and why now]
-ACTION: [What to do next]
+SOURCE: [Where you found it — URL or platform]
+ACTION: [One specific thing to do in the next 24 hours]
 
-Keep it tight. Don't speculate. Don't padding. If in doubt, stay silent.
+Output: Plain text. One lead per block. Max 2 leads per scan. If you find more than 2, prioritize the 2 most actionable.
 ```
+
+**Why this works:**
+
+- **"Report only if" clause** is the most important part — it prevents inbox pollution on low-signal days. Without this, you get noise.
+- **"Max 2 leads per scan"** — quality over quantity. One good lead acted on beats ten leads ignored.
+- **Source URL required** — you can verify and follow up
+- **Action within 24 hours** constraint — if you can't act on it immediately, it's not a lead, it's a news item
+- **Fast model** — this is a scan, not analysis. Speed and cost matter more than depth.
 
 ---
 
-## Next Steps
+## Setting Up Your First Cron
 
-Take these five crons. Map them to your Hermes or OpenClaw setup. Adjust the prompts for your actual industry and workflow. Then stop thinking about scheduling—your agent handles the rhythm now.
+Now that you have the prompts, here's how to actually schedule them.
+
+### Using OpenClaw Cron
+
+```bash
+# Add a cron job
+openclaw cron add \
+  --name "Morning Briefing" \
+  --schedule "30 7 * * 1-5" \
+  --prompt "Morning Briefing — [DATE]..." \
+  --deliver telegram \
+  --model anthropic/claude-haiku-3.5
+```
+
+### Verify It's There
+
+```bash
+openclaw cron list
+```
+
+### Test It Immediately
+
+```bash
+openclaw cron run [job-id]
+```
+
+Check your Telegram. If the output looks right, you're live. If it doesn't, adjust the prompt and test again.
+
+### Useful Cron Commands
+
+| Command | What It Does |
+|---------|-------------|
+| `openclaw cron list` | List all scheduled jobs |
+| `openclaw cron run [id]` | Fire a job immediately (for testing) |
+| `openclaw cron runs` | Show run history |
+| `openclaw cron status` | Show scheduler status |
+| `openclaw cron rm [id]` | Remove a job |
+| `openclaw cron edit [id]` | Edit a job (patch fields) |
+| `openclaw cron disable [id]` | Pause a job |
+| `openclaw cron enable [id]` | Resume a paused job |
 
 ---
 
 # SECTION 03: STEP-BY-STEP WALKTHROUGHS
 
-Three automation systems. Each one builds on the last. Start with Guide 1, move at your own pace.
+Three complete automation systems. Build one today.
 
 ---
 
-## Guide 1: Your First Automation in 20 Minutes
+## System 1: Morning Briefing in 1 Hour
 
-Time: 20 minutes
-What you get: A morning briefing delivered to Telegram every weekday
+Time: 1 hour first time (not 20 minutes — be honest)
+What you get: A morning briefing delivered to Telegram every weekday before you wake up
+
+### Step 1: Create the Vault
+
+```bash
+mkdir -p ~/.vault/memories
+mkdir -p ~/.vault/daily
+```
+
+### Step 2: Create Your PROFILE.md
+
+Fill in `~/.vault/memories/PROFILE.md` with real information. The agent reads this every session — vague profile, vague output.
+
+### Step 3: Connect Telegram
+
+1. Create a bot via @BotFather (see Section 01)
+2. Add token to `~/.hermes/.env`
+3. Run `openclaw gateway start`
+4. Run `hermes`
+5. Message your bot with `/start`
+
+### Step 4: Create the Briefing Prompt
+
+Save the Prompt 1 template from Section 02 to a file:
+
+```bash
+mkdir -p ~/.vault/projects/morning-briefing
+nano ~/.vault/projects/morning-briefing/briefing-prompt.txt
+```
+
+Fill in `[NAME]`, `[ROLE]`, `[DATE]`. The agent handles the date field automatically when it fires.
+
+### Step 5: Schedule It
+
+```bash
+openclaw cron add \
+  --name "Morning Briefing" \
+  --schedule "30 7 * * 1-5" \
+  --prompt-file ~/.vault/projects/morning-briefing/briefing-prompt.txt \
+  --deliver telegram \
+  --model anthropic/claude-haiku-3.5
+```
+
+### Step 6: Test It
+
+```bash
+openclaw cron list
+# Find the job ID
+openclaw cron run [job-id]
+```
+
+Check Telegram. You should see the briefing within seconds.
+
+**Common failures:**
+- Gateway not running: `openclaw gateway start`
+- Telegram not connected: check bot token in `.env`
+- Generic output: strengthen the prompt with more specific constraints
 
 ---
 
-### Step 1: Create Your Vault Folders
+## System 2: Lead Research in 30 Minutes
 
-Open your terminal and run:
-
-```
-mkdir -p ~/.hermes/memories
-mkdir -p ~/.openclaw/vault/{daily,projects,templates}
-mkdir -p ~/.openclaw/vault/projects/morning-briefing
-```
-
-Your folder structure:
-
-```
-~/.hermes/
-  memories/
-    PROFILE.md
-    PROJECTS.md
-~/.openclaw/
-  vault/
-    daily/
-    projects/
-      morning-briefing/
-    templates/
-```
-
----
-
-### Step 2: Fill In Your PROFILE.md
-
-Create the file at `~/.hermes/memories/PROFILE.md`:
-
-```
-# Profile
-
-Name: [YOUR NAME]
-Role: [WHAT YOU DO — e.g., Solo SaaS founder, Growth at Acme Inc]
-Location: [CITY, TIMEZONE]
-
-Goals for this agent:
-- [GOAL 1 — e.g., Never miss a key task again]
-- [GOAL 2 — e.g., Stay on top of industry news]
-- [GOAL 3 — e.g., Produce content consistently]
-
-Communication style: [DIRECT / CONVERSATIONAL / FORMAL]
-Preferred response length: [SHORT / MEDIUM / DETAILED]
-
-What I need help with most:
-- [PRIORITY 1 — e.g., Morning planning and prioritization]
-- [PRIORITY 2 — e.g., Lead research]
-- [PRIORITY 3 — e.g., Content drafting]
-```
-
-Fill in the brackets. The agent reads this every session.
-
----
-
-### Step 3: Connect Hermes to Telegram
-
-1. Open Telegram and search for @BotFather. Send `/newbot`. Follow the prompts. Copy the token it gives you.
-
-2. Create a file called `~/.hermes/.env` with your token:
-```
-TELEGRAM_BOT_TOKEN=123456789:ABCdefGhIJKlmNoPQRstuVWxyZ
-```
-
-3. Start Hermes and send `/start`. You should get a greeting back. If not, check your token is correct and Hermes is running.
-
----
-
-### Step 4: Set Up the Morning Briefing Cron
-
-Create the prompt file at `~/.openclaw/vault/projects/morning-briefing/briefing-prompt.txt`:
-
-```
-Morning Briefing — [DATE]
-
-3 MUST-DOS: The 3 non-negotiable tasks for today. Specific. No fluff.
-
-WHAT'S ON YOUR PLATE: Current projects, threads, commitments. What's active.
-
-RED FLAGS: Anything about to blow up. Deadlines. Follow-ups needed. If clear, say so.
-
-ONE THING DIFFERENTLY: One actionable change for today.
-
-Respond in plain text. Tight and direct. Under 150 words.
-```
-
-Set the cron to fire every weekday at 7:30 AM:
-
-```
-30 7 * * 1-5 cat ~/.openclaw/vault/projects/morning-briefing/briefing-prompt.txt | xargs -I {} hermes --prompt "{}" --deliver telegram
-```
-
----
-
-### Step 5: Test It
-
-Manually trigger the briefing to confirm it works:
-
-```
-cat ~/.openclaw/vault/projects/morning-briefing/briefing-prompt.txt | xargs -I {} hermes --prompt "{}" --deliver telegram
-```
-
-Check Telegram. You should see your briefing within seconds. If it fails, the most common issues: Hermes isn't running, the token is wrong, or the prompt file path is wrong.
-
----
-
-### Step 6: What to Do When the Briefing Arrives
-
-Read it. Act on the 3 must-dos first. The red flags tell you what to watch today. The "one thing differently" is your one lever—if you only change one behavior today, this is it.
-
-Done. Every weekday morning, 7:30 AM, without you doing anything.
-
----
-
-## Guide 2: Build a Lead Research System in 30 Minutes
-
-Time: 30 minutes
-What you get: New leads researched and delivered every Monday morning
-
----
+Time: 30 minutes after you have your ICP defined
+What you get: A weekly research report delivered every Monday morning
 
 ### Step 1: Define Your ICP
 
-Your Ideal Customer Profile tells the agent who to look for. Create `~/.openclaw/vault/projects/lead-research/ICP.md`:
+Your Ideal Customer Profile tells the agent who to look for. Create `~/.vault/projects/lead-research/ICP.md`:
 
-```
+```markdown
 # Ideal Customer Profile
 
 INDUSTRY: [e.g., B2B SaaS, E-commerce, Fintech]
@@ -433,62 +637,54 @@ ROLE: [e.g., VP of Engineering, Head of Growth, Founder]
 LOCATION: [e.g., US-based, Remote-first, Europe]
 PROBLEM: [The specific pain point you solve]
 SIGNALS: [Hiring spikes, funding rounds, new product launches, expansion]
+BUYING TRIGGERS: [What makes them ready to buy now]
 ```
 
-Example filled in:
-
-```
-INDUSTRY: B2B SaaS
-COMPANY SIZE: 20-200 employees
-ROLE: Head of Product or VP Engineering
-LOCATION: US and UK, remote-friendly
-PROBLEM: Engineering team can't ship fast enough despite investing in AI tools
-SIGNALS: Recently raised Series A/B, job posts for "AI Engineer" or "Developer Productivity", discussion of "ship more" on LinkedIn
-```
-
----
+Be specific. "Companies that recently raised Series A" is a signal. "Companies in the AI space" is not.
 
 ### Step 2: Create the Research Prompt
 
-Create `~/.openclaw/vault/projects/lead-research/weekly-research.txt`:
+Save this to `~/.vault/projects/lead-research/weekly-research.txt`:
 
-```
+```markdown
 Lead Research — Week of [DATE]
 
-Task: Find 5-10 companies that match this ICP and surface specific, actionable leads.
+You are a senior B2B sales researcher. Find 5 companies matching this ICP and surface specific, actionable leads.
 
 ICP:
 - Industry: [YOUR INDUSTRY]
 - Company size: [YOUR SIZE RANGE]
 - Role: [YOUR TARGET ROLE]
 - Signals: [YOUR SIGNALS]
+- Buying triggers: [WHAT MAKES THEM READY NOW]
 
-For each lead, provide:
-LEAD: [Company name and brief description]
-SIGNAL: [Why they're interesting right now — what triggered the match]
+For each lead provide:
+COMPANY: [Name, location, brief description]
+SIGNAL: [Why they're interesting right now — specific trigger]
 RELEVANCE: [How this connects to what you offer]
-NEXT ACTION: [One specific thing to do with this lead this week]
+NEXT ACTION: [One specific thing to do this week]
 
-Format as a clean list. No fluff. No speculation. Only include leads you can point to specific evidence for.
+Output: Clean numbered list. No fluff. No speculation. Only include leads you can point to specific evidence for.
 
 If you find fewer than 5 strong leads, report only what you found. Quality over quantity.
 ```
 
----
+### Step 3: Schedule It
 
-### Step 3: Set Up the Cron
+```bash
+mkdir -p ~/.vault/projects/lead-research
 
-Every Monday at 9 AM:
-
+openclaw cron add \
+  --name "Weekly Lead Research" \
+  --schedule "0 9 * * 1" \
+  --prompt-file ~/.vault/projects/lead-research/weekly-research.txt \
+  --deliver telegram \
+  --model anthropic/claude-haiku-3.5
 ```
-0 9 * * 1 cat ~/.openclaw/vault/projects/lead-research/weekly-research.txt | xargs -I {} hermes --prompt "{}" --deliver telegram
-```
-
----
 
 ### Step 4: What the Output Looks Like
 
-Monday 9:05 AM. Telegram message arrives:
+Monday 9:05 AM. Telegram:
 
 ```
 LEAD RESEARCH — Week of April 14, 2026
@@ -499,37 +695,29 @@ Relevance: Engineering bottleneck = your exact problem.
 Next action: DM their VP Eng on LinkedIn referencing the hiring post.
 
 2. MERIDIAN LABS (Remote)
-Signal: Just closed Series B. TechCrunch article mentions "aggressive developer tooling investment."
+Signal: Closed Series B. TechCrunch article mentions "aggressive developer tooling investment."
 Relevance: New budget for exactly what you sell.
-Next action: Cold email their Head of Product. Reference funding.
-
-[3 more leads...]
+Next action: Cold email their Head of Product. Reference the funding.
 ```
 
----
+### Step 5: Build a Simple CRM
 
-### Step 5: How to Use It
+Spreadsheet. Columns: Company | Signal | Action Taken | Response | Date.
 
-Every Monday you get a fresh batch. Pick the 2-3 most promising. Take one action on each within 24 hours—a DM, an email, a comment on their content. The goal isn't to close, it's to start conversations.
-
-Build a simple CRM: a spreadsheet with columns for Company, Signal, Action Taken, Response. Update it weekly.
+Update it every Monday. After 8 weeks you'll have a log that shows what actually converts.
 
 ---
 
-## Guide 3: Content Pipeline in One Hour
+## System 3: Content Pipeline in 1 Hour
 
-Time: 1 hour to set up, 15 minutes per week to maintain
-What you get: A week of content drafts auto-delivered each morning
+Time: 1 hour to set up, 15 minutes per week to manage
+What you get: A week of content drafts auto-delivered each morning, ready to post
 
----
+### Step 1: Define Your Content Pillars
 
-### Step 1: Define Your 3 Content Pillars
+Your pillars are the 3 themes everything you create falls under. Create `~/.vault/projects/content/PILLARS.md`:
 
-Your pillars are the 3 themes everything you create falls under. They keep you focused and help the agent generate consistent content.
-
-Create `~/.openclaw/vault/projects/content/CONTENT-PILLARS.md`:
-
-```
+```markdown
 # Content Pillars
 
 PILLAR 1: [THEME — e.g., "Ship fast without burning out your team"]
@@ -542,115 +730,95 @@ Each pillar answers one question your audience has:
 - Pillar 3 answers: [e.g., "Is this worth the investment?"]
 ```
 
----
+### Step 2: Create This Week's Content Calendar
 
-### Step 2: Create Your Content Calendar
+Create `~/.vault/projects/content/CALENDAR.md`:
 
-Create `~/.openclaw/vault/projects/content/CALENDAR.md`:
-
-```
+```markdown
 # Content Calendar — Week of [DATE]
 
-MONDAY: [PILLAR 1] — [FORMAT: e.g., Thread, Short post]
-TUESDAY: [PILLAR 2] — [FORMAT: e.g., Single insight]
-WEDNESDAY: [PILLAR 3] — [FORMAT: e.g., "Hot take"]
-THURSDAY: [PILLAR 1] — [FORMAT: e.g., How-to thread]
-FRIDAY: [PILLAR 2] — [FORMAT: Reactive comment on industry news]
+MONDAY: Pillar 1 — Thread
+TUESDAY: Pillar 2 — Single post
+WEDNESDAY: Pillar 3 — Hot take
+THURSDAY: Pillar 1 — How-to thread
+FRIDAY: React to news — leave one slot open
 ```
 
-Example:
+Update this every Friday for the week ahead.
 
+### Step 3: Create the Daily Prompt
+
+Save the Content Draft template from Section 02 as `~/.vault/projects/content/today-prompt.txt`, filling in today's topic and platform.
+
+### Step 4: Schedule the Batch Creation
+
+Instead of one prompt per day, create the full week's content in one shot every Sunday:
+
+```bash
+mkdir -p ~/.vault/projects/content
+
+openclaw cron add \
+  --name "Sunday Content Batch" \
+  --schedule "0 18 * * 0" \
+  --prompt-file ~/.vault/projects/content/batch-prompt.txt \
+  --deliver telegram \
+  --model anthropic/claude-haiku-3.5
 ```
-MONDAY: Pillar 1 — "5 ways to ship faster without the chaos" (thread)
-TUESDAY: Pillar 2 — "What we actually use AI for" (short post)
-WEDNESDAY: Pillar 3 — "My MRR isn't growing fast enough" (hot take)
-THURSDAY: Pillar 1 — "The meeting mistake that kills velocity" (how-to)
-FRIDAY: Pillar 2 — React to relevant news from the week
-```
 
----
+### Step 5: The Sunday Batch Prompt
 
-### Step 3: Set Up the Content Cron
-
-The agent delivers one draft every morning at 9 AM. You choose which day gets which pillar by updating the calendar weekly.
-
-```
-0 9 * * 1-5 cat ~/.openclaw/vault/projects/content/today-prompt.txt | xargs -I {} hermes --prompt "{}" --deliver telegram
-```
-
-For this to work, you update `~/.openclaw/vault/projects/content/today-prompt.txt` with today's topic before the cron fires. Or—easier—set a single weekly cron that generates the full week's content in one shot (see Step 4).
-
----
-
-### Step 4: The Batch Creation Workflow
-
-Once per week, trigger a batch creation session. Create `~/.openclaw/vault/projects/content/batch-prompt.txt`:
-
-```
+```markdown
 Content Batch — Week of [DATE]
 
 Task: Write 5 content pieces for the week. One for each weekday.
 
-PIllars to cycle through:
-- Pillar 1: [YOUR PILLAR 1 THEME]
-- Pillar 2: [YOUR PILLAR 2 THEME]
-- Pillar 3: [YOUR PILLAR 3 THEME]
+For each day:
+PIllar: [From your calendar — Pillar 1, 2, or 3]
+Platform: [X or LinkedIn]
+Tone: [Specific — e.g., "provocative", "educational", "short story"]
 
-Format for each day:
-[DATE] — [PLATFORM]
+Format for each:
+[DATE] ([PLATFORM]):
+[content]
 ---
-[content here]
----
 
-For X/Twitter: Under 280 characters. Strong hook first. No hashtags unless natural.
-For LinkedIn: Under 200 words. Lead with a specific insight or story.
+X/Twitter: Under 280 characters. Strong hook first. No hashtags unless natural.
+LinkedIn: Under 200 words. Scroll-stopper opener. No hashtags in body.
 
-Write each piece ready to post. Zero editing needed from me. If a piece needs context only you have, note what that is.
+Write each piece ready to post. Zero editing needed.
 ```
 
-Trigger it manually:
+### Step 6: What You Get
+
+Sunday 6 PM, Telegram:
 
 ```
-cat ~/.openclaw/vault/projects/content/batch-prompt.txt | xargs -I {} hermes --prompt "{}" --deliver telegram
+SUNDAY CONTENT BATCH — Week of April 14
+
+APRIL 14 (X, provocative):
+[3 provocative tweets]
+---
+
+APRIL 15 (LinkedIn, educational):
+[Educational post]
+---
+
+[...]
+
+Ready to schedule in Buffer/Hypefury. Copy, paste, post.
 ```
 
-You'll get all 5 drafts in one message. Save them to your calendar file.
+---
+
+# SECTION 04: FILE TEMPLATES
+
+Five templates ready to copy and deploy.
 
 ---
 
-### Step 5: How to Schedule and Post
+## Template 1: PROFILE.md
 
-With your 5 drafts in hand:
-
-1. Paste each draft into your scheduling tool (Buffer, Later, Hypefury—whatever you use)
-2. Set the times your audience is most active
-3. For reactive Friday content, keep one slot open and fill it when news breaks
-
-The agent handles the heavy lifting. You handle the judgment—does this sound like me? Is this the right take? Then you post.
-
----
-
-## What You Have Now
-
-Three systems running on autopilot:
-
-- Morning briefing: Every weekday, 7:30 AM
-- Lead research: Every Monday, 9 AM
-- Content drafts: Batch created weekly, ready to schedule
-
-Add more as you need them. The pattern is always the same: define what you want, write the prompt, set the cron, let it run.
-
----
-
-# Section 04 — File Templates
-
-These are copy-paste-ready templates. Drop them into your vault, fill them in, and reference them in conversation. The AI reads these files directly — blank fields get ignored, filled fields get used. Keep them updated.
-
----
-
-## Template 1 — PROFILE.md
-
-Drop this in: `~/.openclaw/vault/dawn-vault/[your-name]/PROFILE.md`
+Location: `~/.vault/memories/PROFILE.md`
 
 ```markdown
 # Profile
@@ -660,7 +828,7 @@ Location / Timezone:
 Role:
 
 ## What I'm Building
-<!-- One paragraph. Be specific. Not "a business" — what exactly. -->
+<!-- One paragraph. Specific. -->
 
 ## Goals This Month
 1.
@@ -668,74 +836,70 @@ Role:
 3.
 
 ## Current Projects
-<!-- List active projects with one-line status each -->
-- Project name — status / next action
-- Project name — status / next action
-- Project name — status / next action
+<!-- One line: name — status / next action -->
+-
+-
+-
 
 ## How I Like to Work
-<!-- Preferred session length, async vs sync, decision style, pace -->
+<!-- Session length, async vs sync, decision style -->
 
 ## My Voice
-Use: <!-- e.g. direct, punchy, no fluff, first person, short sentences -->
-Avoid: <!-- e.g. corporate speak, excessive hedging, bullet-point overload, emojis -->
+Use:
+<!-- e.g. direct, punchy, no fluff, first person -->
+Avoid:
+<!-- e.g. corporate speak, hedging, bullet overload -->
 
 ## Key Preferences
-- Format: <!-- e.g. bullet lists / prose / tables -->
-- Response length: <!-- e.g. short by default, expand on request -->
-- Feedback style: <!-- e.g. blunt is fine / sandwich it -->
-- Other:
+- Format:
+- Response length:
+- Feedback style:
 ```
 
 ---
 
-## Template 2 — PROJECT-BRIEF.md
+## Template 2: PROJECT-BRIEF.md
 
-Drop this in: `~/.openclaw/vault/dawn-vault/[your-name]/projects/[project-name]/PROJECT-BRIEF.md`
+Location: `~/.vault/projects/[project-name]/PROJECT-BRIEF.md`
 
 ```markdown
 # Project Brief — [Project Name]
 
 One-liner:
-<!-- What is this in one sentence. -->
 
 ## Why We're Doing It
-<!-- The real reason. Not the polished pitch — the actual motivation. -->
+<!-- The real reason. Not the pitch — the actual motivation. -->
 
 ## Success Criteria
-<!-- Specific and dated. -->
-By [date]:
 By [date]:
 By [date]:
 
 ## Current Status
-<!-- Where things stand right now. One paragraph. -->
+<!-- One paragraph. Where things stand right now. -->
 
 ## Who's Involved
 - Owner:
 - Contributors:
-- Stakeholders / clients:
+- Stakeholders:
 
-## Timeline Milestones
+## Timeline
 | Date | Milestone |
 |------|-----------|
-|      |           |
-|      |           |
 |      |           |
 
 ## Budget
 Total:
-Spent to date:
+Spent:
 Remaining:
 
 ## What's at Risk
 <!-- Be honest. What could kill this? -->
 
 ## What We Tried Before
-<!-- Previous attempts, failed approaches, dead ends. Don't repeat them. -->
+<!-- Previous attempts, dead ends. Don't repeat them. -->
 
 ## What NOT to Do
-<!-- Hard constraints. Non-negotiables. Lines not to cross. -->
+<!-- Hard constraints. Non-negotiables. -->
 -
 -
 -
@@ -743,9 +907,9 @@ Remaining:
 
 ---
 
-## Template 3 — WEEKLY-REVIEW.md
+## Template 3: WEEKLY-REVIEW.md
 
-Drop this in: `~/.openclaw/vault/dawn-vault/[your-name]/reviews/WEEKLY-REVIEW-[YYYY-MM-DD].md`
+Location: `~/.vault/daily/reviews/WEEKLY-REVIEW-YYYY-MM-DD.md`
 
 ```markdown
 # Weekly Review
@@ -754,19 +918,15 @@ Week of: [Mon DD MMM] — [Sun DD MMM YYYY]
 
 ## Numbers
 Revenue — Actual: $       Target: $       Delta: $
-Leads — New this week:    Converted:      Pipeline total:
-Content posted:           Reach / impressions (if tracked):
+Leads — New:    Converted:      Pipeline:
+Content posted:
 
 ## What Shipped
-<!-- Completed, published, sent, launched — done is done. -->
--
--
+<!-- Done. Published. Sent. Launched. -->
 -
 
 ## What Didn't
-<!-- Missed, blocked, pushed. No fluff — just what and why. -->
--
--
+<!-- Missed. Blocked. Pushed. No fluff. -->
 -
 
 ## Top 3 Next Week
@@ -775,17 +935,17 @@ Content posted:           Reach / impressions (if tracked):
 3.
 
 ## One Decision Needed
-<!-- The thing you're avoiding. Name it. Make the call or note why not yet. -->
+<!-- The thing you're avoiding. Name it. -->
 
-## Energy / Wellness Note
-<!-- Optional but useful. Burned out? Locked in? Distracted? One line. -->
+## Energy Note
+<!-- One line. Burned out? Locked in? Distracted? -->
 ```
 
 ---
 
-## Template 4 — ICP-TEMPLATE.md
+## Template 4: ICP.md
 
-Drop this in: `~/.openclaw/vault/dawn-vault/[your-name]/strategy/ICP-TEMPLATE.md`
+Location: `~/.vault/projects/[project-name]/ICP.md`
 
 ```markdown
 # Ideal Customer Profile
@@ -794,27 +954,25 @@ Drop this in: `~/.openclaw/vault/dawn-vault/[your-name]/strategy/ICP-TEMPLATE.md
 Industry:
 Company size:
 Location:
-Title / Role of buyer:
+Title / Role:
 
 ## Their #1 Problem
-<!-- The thing keeping them up at night. In their words, not yours. -->
+<!-- In their words. Not yours. -->
 
-## Current Solution They Use
-<!-- What are they doing about it right now? Tools, people, workarounds. -->
+## Current Solution
+<!-- What are they doing about it now? Tools, people, workarounds. -->
 
-## What They'd Pay to Fix It
-Price range they'd accept:
-What they're paying now (if known):
-What outcome justifies the spend:
+## What They'd Pay
+Price range:
+What they're paying now:
+Outcome that justifies the spend:
 
 ## Where to Find Them
-<!-- Specific. Channels, communities, events, platforms, search terms. -->
--
+<!-- Specific. Channels, communities, events, platforms. -->
 -
 -
 
 ## Qualification Criteria
-
 Must-have (all 3 required):
 1.
 2.
@@ -825,54 +983,29 @@ Nice-to-have (bonus signals):
 2.
 
 ## Disqualifiers
-<!-- Who to walk away from immediately. -->
+<!-- Who to walk away from. -->
 -
 -
 ```
 
 ---
 
-## Template 5 — CONTENT-CALENDAR.md
+## Template 5: CONTENT-CALENDAR.md
 
-Drop this in: `~/.openclaw/vault/dawn-vault/[your-name]/content/CONTENT-CALENDAR-[YYYY-WW].md`
+Location: `~/.vault/projects/content/CONTENT-CALENDAR-YYYY-WW.md`
 
 ```markdown
 # Content Calendar
 
 Week of: [Mon DD MMM — Sun DD MMM YYYY]
-This week's theme:
-<!-- One idea that ties everything together. Optional but useful. -->
+Theme:
 
 ## Content Pillars
 1.
 2.
 3.
 
-## Platform Schedule
-
-| Platform   | Days       | Format     | Goal          |
-|------------|------------|------------|---------------|
-|            |            |            |               |
-|            |            |            |               |
-|            |            |            |               |
-
-## Posting Times
-<!-- Local times. Be specific — "morning" is not a time. -->
-- Platform:  Time:
-- Platform:  Time:
-- Platform:  Time:
-
-## Voice Rules
-Always:
--
--
-
-Never:
--
--
-
 ## This Week's Topics
-<!-- One post per line. Include platform, format, and one-line angle. -->
 
 | # | Platform | Format | Angle / Hook |
 |---|----------|--------|--------------|
@@ -881,28 +1014,26 @@ Never:
 | 3 |          |        |              |
 | 4 |          |        |              |
 | 5 |          |        |              |
+
+## Voice Rules
+Always:
+-
+Never:
+-
+
+## Posting Times
+-
+-
 ```
 
 ---
 
-## How to Use These
+# SECTION 05: QUICK REFERENCE
 
-Fill them in once, keep them current. Reference them by filename in chat — the AI will pull the context automatically. Stale files produce stale output. Update after every major shift: new project, new goal, new quarter.
+## Cron Cheat Sheet
 
-These templates work best when they live alongside each other in your vault. The AI cross-references them — your PROFILE informs how PROJECT-BRIEFs get drafted, your ICP shapes CONTENT-CALENDAR angles, your WEEKLY-REVIEW feeds the next planning session.
-
-Blank is fine to start. Done is better than perfect.
-
----
-
-# SECTION 05 — QUICK REFERENCE
-
----
-
-## Cron Schedule Cheat Sheet
-
-| What You Want | What to Type |
-|---------------|--------------|
+| What You Want | Cron Expression |
+|--------------|-----------------|
 | Every day 7 AM | `0 7 * * *` |
 | Every day 9 AM | `0 9 * * *` |
 | Weekdays 7:30 AM | `30 7 * * 1-5` |
@@ -911,58 +1042,104 @@ Blank is fine to start. Done is better than perfect.
 | Every 4 hours | `0 */4 * * *` |
 | Every 2 hours | `0 */2 * * *` |
 | 1st of month 9 AM | `0 9 1 * *` |
-| Wednesday + Friday 9 AM | `0 9 * * 3,5` |
+| Wed + Fri 9 AM | `0 9 * * 3,5` |
 | Every weekday noon | `0 12 * * 1-5` |
 
-**Format reminder:** `minute hour day-of-month month day-of-week`
-
-Use `1-5` for weekdays, `0` for Sunday, comma-separate multiple days (e.g., `3,5`).
-
----
-
-## Delivery Destinations
-
-| Where | Syntax | Example |
-|-------|--------|---------|
-| Telegram DM | `tg://dm:<user_id>` | `tg://dm:123456789` |
-| Discord channel | `discord://channel/<channel_id>` | `discord://channel/987654321` |
-| Discord DM | `discord://dm/<user_id>` | `discord://dm/111222333` |
-| Email | `mailto:<address>` | `mailto:user@example.com` |
-| Local file | `file://<absolute_path>` | `file:///home/user/output.txt` |
-
-User IDs and channel IDs are numeric — find them via Discord's developer mode (right-click user/channel → Copy ID).
+**Format:** `minute hour day-of-month month day-of-week`
+Days: 0=Sunday, 1=Monday, ..., 6=Saturday
 
 ---
 
 ## OpenClaw Commands
 
-| Command | Purpose |
-|---------|--------|
-| `openclaw gateway start` | Start the local gateway |
-| `openclaw gateway stop` | Stop the gateway |
+### Gateway
+
+| Command | What It Does |
+|---------|-------------|
+| `openclaw gateway start` | Start the gateway service |
+| `openclaw gateway stop` | Stop the gateway service |
+| `openclaw gateway status` | Check if gateway is running |
+| `openclaw gateway restart` | Restart the gateway |
+| `openclaw gateway health` | Gateway health check |
+| `openclaw gateway usage-cost` | Show usage costs |
+
+### Cron
+
+| Command | What It Does |
+|---------|-------------|
 | `openclaw cron list` | List all scheduled jobs |
-| `openclaw cron create` | Create a new cron job |
-| `openclaw cron run <id>` | Fire a job immediately |
-| `openclaw cron remove <id>` | Delete a cron job |
-| `openclaw config show` | Display current configuration |
+| `openclaw cron add` | Add a new cron job |
+| `openclaw cron rm [id]` | Remove a cron job |
+| `openclaw cron run [id]` | Fire a job immediately |
+| `openclaw cron runs` | Show run history |
+| `openclaw cron status` | Show scheduler status |
+| `openclaw cron edit [id]` | Edit a job |
+| `openclaw cron disable [id]` | Pause a job |
+| `openclaw cron enable [id]` | Resume a job |
+
+### Config
+
+| Command | What It Does |
+|---------|-------------|
+| `openclaw config file` | Show config file path |
+| `openclaw config get [path]` | Get a config value |
+| `openclaw config set [path] [value]` | Set a config value |
+| `openclaw config validate` | Validate config against schema |
 
 ---
 
 ## Troubleshooting
 
-**Cron not firing** — Confirm the gateway is running (`openclaw gateway status`). Check that the cron schedule syntax is valid and the job is enabled. Review logs at `~/.openclaw/logs/` for error details.
+**Cron not firing:**
+1. `openclaw gateway status` — is the gateway running?
+2. `openclaw cron list` — is the job listed?
+3. `openclaw cron status` — is the scheduler running?
+4. `openclaw cron runs` — any error in the run history?
 
-**Agent giving generic responses** — Increase `context_window` in your agent config. Embed stronger persona cues in the system prompt and give the agent 2-3 example outputs to match.
+**Agent giving generic responses:**
+- Increase `context_window` in your agent config
+- Strengthen persona cues in the system prompt
+- Add 2-3 example outputs for the agent to match
+- Upgrade model tier for that prompt
 
-**Telegram not connecting** — Verify the bot token is set correctly in config. The bot must have been started by at least one user (send it a message). Check that your gateway has Telegram enabled in delivery settings.
+**Agent forgetting context:**
+- Lower output token limit to free context space
+- Switch to a model with larger context window
+- Break long conversations into sessions with explicit summary handoffs
 
-**Agent forgetting context** — Lower the output token limit to free up context space. Alternatively, switch to a model with a larger context window. Break long conversations into分段 sessions with explicit summary handoffs.
+**Content sounding generic:**
+- Add specific voice attributes to your persona: "writes like a sharp editorial assistant who has a opinion"
+- Include 3-5 real example outputs to mirror
+- Add a "Do NOT use" list for specific phrases
+- Vary sentence structure, inject domain-specific terminology
 
-**Content sounding generic** — Add specific voice attributes to your persona prompt (e.g., "writes like a sharp editorial assistant"). Include 3-5 real example outputs the agent must mirror. Vary sentence structure and inject domain-specific terminology.
+**Telegram not connecting:**
+- Verify bot token in `~/.hermes/.env`
+- Bot must have been started by at least one user (send it a message)
+- Run `openclaw gateway status` to confirm gateway has Telegram enabled
+
+**Cron firing too often / too expensive:**
+- Switch the prompt's model to a faster/cheaper tier
+- Lengthen the schedule: every 4 hours -> every 8 hours
+- Remove crons that are "nice to have" and keep "must have"
 
 ---
 
-## Config File Locations
+## Quick Health Check
+
+Run these three commands when diagnosing delivery failures:
+
+```bash
+openclaw gateway status   # is the gateway up?
+openclaw cron list        # are jobs scheduled?
+openclaw cron runs        # any errors in recent runs?
+```
+
+These three commands cover the three most common failure points: stopped gateway, missing cron entry, runtime errors.
+
+---
+
+## Vault File Locations
 
 | File | Path |
 |------|------|
@@ -970,30 +1147,24 @@ User IDs and channel IDs are numeric — find them via Discord's developer mode 
 | Agent personas | `~/.openclaw/personas/` |
 | Cron definitions | `~/.openclaw/crons/` |
 | Logs | `~/.openclaw/logs/` |
-| Delivery queue | `~/.openclaw/delivery-queue/` |
+| Your vault root | `~/.vault/` |
 
 ---
 
-## Quick Health Check
+## What You Have Now
 
-```bash
-openclaw config show    # verify settings
-openclaw gateway status # confirm running
-openclaw cron list      # confirm jobs scheduled
-```
+Three automation systems running on autopilot:
 
-Run these three commands when diagnosing delivery failures. They cover the three most common failure points: bad config, stopped gateway, missing cron entries.
+| System | Schedule | What You Get |
+|--------|----------|-------------|
+| Morning Briefing | Weekdays 7:30 AM | 3 must-dos, what's on, red flags, one change |
+| Weekly Review | Sundays 8 PM | Wins, metrics, top 3, one decision |
+| Content Batch | Sundays 6 PM | 5 drafts ready to schedule |
+| Lead Research | Mondays 9 AM | 5 actionable leads with next steps |
+| Opportunity Scan | Every 4 hours | Actionable leads or silence |
+
+Add more as you need them. The pattern is always: define what you want, write the prompt, schedule the cron, let it run.
 
 ---
 
-## Cron Syntax Quick Reference
-
-- `*` = every value
-- `*/n` = every n units
-- `n,m` = specific values (comma-separated)
-- `n-m` = range of values
-- Days: 0=Sunday, 1=Monday, ..., 6=Saturday
-
-For odd schedules (e.g., "every 90 minutes"), use two crons or a custom interval definition in your flow configuration.
----
-*Built with Hermes × OpenClaw | Last updated: 2026-04-15*
+*Built with Hermes x OpenClaw | Last updated: 2026-04-15*
