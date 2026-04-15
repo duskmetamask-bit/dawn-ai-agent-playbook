@@ -57,7 +57,7 @@ export default function Home() {
 
         {/* CTA */}
         <Link
-          href="#sections"
+          href="/playbook"
           className="group inline-flex items-center gap-2 px-8 py-4 rounded-full bg-blue-600 hover:bg-blue-500 text-white font-semibold text-lg transition-all duration-200 hover:shadow-lg hover:shadow-blue-500/25 hover:-translate-y-0.5"
         >
           Get the Playbook
